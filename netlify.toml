@@ -1,14 +1,16 @@
 [build]
   functions = "netlify/functions"
-  publish   = "."
+  # Solo se publica /public: server.js, lib/, package.json, scripts/ y los .md
+  # quedan fuera del sitio (antes se publicaba todo el repo con publish = ".").
+  publish   = "public"
 
-# Redirige /create-preference → Netlify Function (transparente para el frontend)
+# /create-preference → Netlify Function (transparente para el frontend)
 [[redirects]]
   from   = "/create-preference"
   to     = "/.netlify/functions/create-preference"
   status = 200
 
-# Redirige /webhook → Netlify Function
+# /webhook → Netlify Function (notificaciones de MercadoPago)
 [[redirects]]
   from   = "/webhook"
   to     = "/.netlify/functions/webhook"
@@ -21,3 +23,23 @@
   command     = "node server.js"
   port        = 3000
   targetPort  = 3000
+
+# ── Seguridad básica ───────────────────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options        = "SAMEORIGIN"
+    Referrer-Policy        = "strict-origin-when-cross-origin"
+    Permissions-Policy     = "camera=(), microphone=(), geolocation=()"
+
+# ── Caché de imágenes y video ──────────────────────────────────────
+[[headers]]
+  for = "/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/media/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"

@@ -1,11 +1,12 @@
 {
-  "name": "be-imparables-landing",
+  "name": "landing-santicardenas",
   "version": "1.0.0",
-  "description": "Landing page + backend de pagos — El Futuro Es Ahora · Be Imparables",
+  "description": "Landing Código del Futuro (Bogotá, 18 oct 2026) — Santiago Cárdenas · pagos con MercadoPago sobre Netlify",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "check": "node scripts/check.js"
   },
   "dependencies": {
     "dotenv": "^16.4.5",

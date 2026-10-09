@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Estado de tu pago | Código del Futuro</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#050507">
+<script src="/pixel.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#050507; --purple:#7c2cff; --fuchsia:#e62cff; --pink:#ff3fc8;
+  --white:#fff; --soft:#e7e7ed; --gray:#9696a2;
+  --gradient:linear-gradient(100deg,#6625ff 0%,#bb25ff 48%,#ff2ca8 100%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 0%,rgba(124,44,255,.28),transparent 60%),var(--black);
+  color:var(--white);font-family:"Inter",system-ui,sans-serif;padding:28px 18px;
+}
+.card{
+  width:100%;max-width:620px;text-align:center;padding:48px 30px;border-radius:24px;
+  border:1px solid rgba(145,73,255,.35);
+  background:linear-gradient(180deg,rgba(18,10,31,.98),rgba(7,4,12,.98));
+  box-shadow:0 24px 70px rgba(0,0,0,.5);
+}
+.eyebrow{font-family:"Barlow Condensed",sans-serif;font-weight:700;letter-spacing:.2em;font-size:14px;color:#a86cff;margin-bottom:14px}
+h1{font-family:"Barlow Condensed",sans-serif;font-weight:900;font-size:clamp(40px,8vw,62px);line-height:.95;text-transform:uppercase;margin-bottom:18px}
+h1 span{background:var(--gradient);-webkit-background-clip:text;background-clip:text;color:transparent}
+p{color:var(--soft);line-height:1.6;font-size:16px;margin-bottom:12px}
+.small{color:var(--gray);font-size:13px;margin-top:22px}
+.actions{display:flex;flex-direction:column;gap:12px;margin-top:26px}
+.btn{
+  display:inline-block;text-decoration:none;color:#fff;font-family:"Barlow Condensed",sans-serif;
+  font-weight:800;letter-spacing:.06em;font-size:18px;padding:16px 22px;border-radius:12px;
+  background:var(--gradient);box-shadow:0 0 34px rgba(139,45,255,.35);
+}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.22);box-shadow:none}
+.state{display:none}
+.state.on{display:block}
+</style>
+</head>
+<body>
+<main class="card">
+
+  <section class="state" id="st-approved">
+    <div class="eyebrow">PAGO APROBADO</div>
+    <h1>¡Tu cupo está <span>asegurado!</span></h1>
+    <p>Gracias por dar el paso. MercadoPago te enviará la confirmación del pago a tu correo.</p>
+    <p>Escríbenos por WhatsApp para coordinar los detalles de tu ingreso a <strong>Código del Futuro</strong> (18 de octubre · Ágora Centro de Convenciones, Bogotá).</p>
+    <div class="actions">
+      <a class="btn" id="wa-approved" target="_blank" rel="noopener noreferrer">ESCRIBIR POR WHATSAPP</a>
+    </div>
+  </section>
+
+  <section class="state" id="st-pending">
+    <div class="eyebrow">PAGO EN PROCESO</div>
+    <h1>Estamos <span>verificando</span> tu pago</h1>
+    <p>Tu pago aún está siendo confirmado (con PSE o efectivo puede tardar un poco). Cuando se apruebe, MercadoPago te avisará por correo.</p>
+    <p>Si tienes dudas, escríbenos y te ayudamos.</p>
+    <div class="actions">
+      <a class="btn" id="wa-pending" target="_blank" rel="noopener noreferrer">HABLAR CON UN ASESOR</a>
+    </div>
+  </section>
+
+  <section class="state" id="st-rejected">
+    <div class="eyebrow">PAGO NO COMPLETADO</div>
+    <h1>No pudimos <span>procesar</span> el pago</h1>
+    <p>No se realizó ningún cobro. Puedes intentarlo de nuevo con otro medio de pago, o escribirnos y un asesor te acompaña.</p>
+    <div class="actions">
+      <a class="btn" href="/#entradas">INTENTAR DE NUEVO</a>
+      <a class="btn ghost" id="wa-rejected" target="_blank" rel="noopener noreferrer">HABLAR CON UN ASESOR</a>
+    </div>
+  </section>
+
+  <section class="state" id="st-unknown">
+    <div class="eyebrow">CÓDIGO DEL FUTURO</div>
+    <h1>Bogotá · <span>18 de octubre</span></h1>
+    <p>No encontramos información de un pago en esta página.</p>
+    <div class="actions">
+      <a class="btn" href="/">VOLVER AL INICIO</a>
+    </div>
+  </section>
+
+  <p class="small">Código del Futuro · Bogotá, Colombia · 18 de octubre de 2026</p>
+</main>
+
+<script>
+(function(){
+  var WA_NUMBER = '573028424469';   // debe coincidir con lib/event.js
+  var PRICE_COP = 280000;           // debe coincidir con lib/event.js
+
+  function waLink(msg){ return 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg); }
+
+  var q = new URLSearchParams(window.location.search);
+  // MercadoPago agrega collection_status / payment_id al volver; son más confiables que el ?status= propio
+  var raw = (q.get('collection_status') || q.get('status') || '').toLowerCase();
+  var paymentId = q.get('payment_id') || q.get('collection_id') || '';
+
+  var state = 'unknown';
+  if (raw === 'approved') state = 'approved';
+  else if (raw === 'in_process' || raw === 'pending') state = 'pending';
+  else if (raw === 'rejected' || raw === 'failure' || raw === 'cancelled') state = 'rejected';
+
+  var ref = paymentId ? ' (pago ' + paymentId + ')' : '';
+  var el = document.getElementById('st-' + state);
+  if (el) el.classList.add('on');
+
+  var links = {
+    'wa-approved': 'Hola Santiago, ya pagué mi boleta para Código del Futuro' + ref + '. Quiero coordinar mi ingreso.',
+    'wa-pending':  'Hola Santiago, mi pago de Código del Futuro quedó en proceso' + ref + '. Necesito ayuda.',
+    'wa-rejected': 'Hola Santiago, no pude completar el pago de Código del Futuro. Necesito ayuda.'
+  };
+  Object.keys(links).forEach(function(id){
+    var a = document.getElementById(id);
+    if (a) a.href = waLink(links[id]);
+  });
+
+  // Evento Purchase del Pixel: solo con pago aprobado Y un payment_id real, una vez por pago
+  if (state === 'approved' && paymentId && window.META_PIXEL_ID && typeof fbq === 'function') {
+    var key = 'cdf_purchase_' + paymentId;
+    try {
+      if (!localStorage.getItem(key)) {
+        fbq('track', 'Purchase', { value: PRICE_COP, currency: 'COP', content_name: 'Código del Futuro — Boleta General' });
+        localStorage.setItem(key, '1');
+      }
+    } catch (e) {
+      fbq('track', 'Purchase', { value: PRICE_COP, currency: 'COP', content_name: 'Código del Futuro — Boleta General' });
+    }
+  }
+})();
+</script>
+</body>
+</html>
