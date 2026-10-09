@@ -2,6 +2,11 @@
 
 Landing de venta de boletas con pago por **MercadoPago**, publicada en **Netlify**.
 
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/santitrader26/landing-santicardenas)
+
+> Un clic: Netlify pide iniciar sesión, crea el sitio desde este repo y te muestra un formulario para pegar
+> tu `MP_ACCESS_TOKEN`. Después solo queda apuntar el dominio (ver abajo).
+
 ```
 public/              ← lo único que se publica
   index.html           landing

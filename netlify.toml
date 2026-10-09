@@ -43,3 +43,8 @@
   for = "/media/*"
   [headers.values]
     Cache-Control = "public, max-age=2592000"
+
+# Formulario que Netlify muestra al desplegar con el botón "Deploy to Netlify"
+# (README). El valor lo escribe quien despliega; nunca se guarda en el repo.
+[template.environment]
+  MP_ACCESS_TOKEN = "Access Token de PRODUCCIÓN de MercadoPago (empieza por APP_USR-). Lo ves en mercadopago.com.co/developers/panel → Credenciales de producción"
